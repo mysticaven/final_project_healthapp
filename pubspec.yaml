@@ -11,9 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  audioplayers: ^4.1.0  # Check for the latest version
   chewie: ^1.4.0
-  audioplayers: ^1.0.1
+
   flutter_tts: ^3.6.3
 
   video_player: ^2.4.5
