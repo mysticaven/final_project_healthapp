@@ -4,7 +4,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-// Define Exercise class first
+// Define Exercise class
 class Exercise {
   final String id;
   final String title;
@@ -61,11 +61,60 @@ class _ExercisePageState extends State<ExercisePage> {
       videoUrl: 'https://www.youtube.com/watch?v=05H0tjWx8UA',
       calculateReps: (_) => 15,
     ),
+    Exercise(
+      id: 'wrist_curls',
+      title: "Wrist Curls",
+      description: "Use a lightweight to perform wrist curls.",
+      targetLimb: 'Forearm',
+      difficultyLevel: 3,
+      isRecommended: true,
+      videoUrl: 'https://www.youtube.com/watch?v=d5vDdyvgoX8',
+      calculateReps: (mobility) => (mobility * 1.5).toInt(),
+    ),
+    Exercise(
+      id: 'shoulder_shrugs',
+      title: "Shoulder Shrugs",
+      description: "Lift shoulders up towards your ears and relax.",
+      targetLimb: 'Shoulders',
+      difficultyLevel: 1,
+      isRecommended: true,
+      videoUrl: 'https://www.youtube.com/watch?v=V4U8sUK8Q_o',
+      calculateReps: (_) => 20,
+    ),
+    Exercise(
+      id: 'leg_lifts',
+      title: "Leg Lifts",
+      description: "Raise one leg at a time while seated.",
+      targetLimb: 'Legs',
+      difficultyLevel: 2,
+      isRecommended: false,
+      videoUrl: 'https://www.youtube.com/watch?v=cDi4rybfaRc',
+      calculateReps: (mobility) => (mobility * 1.2).toInt(),
+    ),
+    Exercise(
+      id: 'ankle_rotations',
+      title: "Ankle Rotations",
+      description: "Rotate your ankles in circles, both clockwise and counter-clockwise.",
+      targetLimb: 'Ankles',
+      difficultyLevel: 1,
+      isRecommended: true,
+      videoUrl: 'https://www.youtube.com/watch?v=H1CKVwI3ghg',
+      calculateReps: (_) => 10,
+    ),
+    Exercise(
+      id: 'toe_taps',
+      title: "Toe Taps",
+      description: "Tap your toes up and down while seated.",
+      targetLimb: 'Feet',
+      difficultyLevel: 1,
+      isRecommended: false,
+      videoUrl: 'https://www.youtube.com/watch?v=5Av7-42wYEs',
+      calculateReps: (_) => 15,
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Add build method implementation
     return MaterialApp(
       theme: ThemeData.dark().copyWith(
         colorScheme: ColorScheme.dark(
@@ -83,8 +132,7 @@ class _ExercisePageState extends State<ExercisePage> {
           ),
         ),
         textTheme: TextTheme(
-          titleLarge:
-              const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          titleLarge: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           bodyMedium: TextStyle(color: _textColor, fontSize: 16),
         ),
       ),
@@ -286,12 +334,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Stack(
-              children: [
-                _buildVideoPlayerWithGlow(),
-                _buildCueOverlay(),
-                _buildPositiveFeedback(),
-              ],
-            ),
+        children: [
+          _buildVideoPlayerWithGlow(),
+          _buildCueOverlay(),
+          _buildPositiveFeedback(),
+        ],
+      ),
     );
   }
 
@@ -303,12 +351,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         borderRadius: BorderRadius.circular(20),
         boxShadow: _showPositiveFeedback
             ? [
-                BoxShadow(
-                  color: Colors.green.withOpacity(0.5),
-                  blurRadius: 20,
-                  spreadRadius: 5,
-                )
-              ]
+          BoxShadow(
+            color: Colors.green.withOpacity(0.5),
+            blurRadius: 20,
+            spreadRadius: 5,
+          )
+        ]
             : [],
       ),
       child: ClipRRect(
@@ -374,7 +422,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                   Shadow(
                     blurRadius: 10,
                     color: Colors.green,
-                  )
+                    offset: Offset(0, 3),
+                  ),
                 ],
               ),
             ),
@@ -385,15 +434,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   String _getRandomEncouragement() {
-    final encouragements = [
-      'Great Form!',
-      'Perfect!',
-      'Excellent!',
-      'Well Done!',
-      'Awesome!',
-      'Keep It Up!'
+    const encouragements = [
+      'You are doing great!',
+      'Keep pushing!',
+      'Fantastic progress!',
+      'You’re almost there!',
+      'Amazing effort!'
     ];
-    return encouragements[DateTime.now().microsecond % encouragements.length];
+    return encouragements[DateTime.now().millisecondsSinceEpoch % encouragements.length];
   }
 }
 
@@ -404,15 +452,15 @@ class _DifficultyStars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(
-          3,
-          (index) => Icon(
-                index < difficulty ? Icons.star : Icons.star_border,
-                color: Colors.amber,
-                size: 20,
-              )),
-    );
+    List<Widget> stars = [];
+    for (int i = 0; i < 5; i++) {
+      stars.add(Icon(
+        i < difficulty ? Icons.star : Icons.star_border,
+        color: i < difficulty ? Colors.yellow : Colors.grey,
+        size: 20,
+      ));
+    }
+    return Row(children: stars);
   }
 }
 

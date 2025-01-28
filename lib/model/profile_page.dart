@@ -1,6 +1,3 @@
-// File: profile_page.dart
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -10,24 +7,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _lastStrokeDateController =
-      TextEditingController();
-
-// Add this method in the _ProfilePageState class
-  Widget _buildSectionHeader(String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
+  final TextEditingController _lastStrokeDateController = TextEditingController();
 
   // State variables
   String? _affectedSide;
@@ -42,19 +22,37 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Stroke Patient Profile'),
-        backgroundColor: Colors.black,
-        elevation: 0,
+    return Theme(
+      data: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.grey[900],
+        cardColor: Colors.grey[800],
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.white),
+          titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.grey[800],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
       ),
-      body: Container(
-        color: Colors.grey[50],
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Stroke Patient Profile'),
+          backgroundColor: Colors.grey[900],
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
-            child: ListView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSectionHeader('Stroke Details'),
                 const SizedBox(height: 16),
@@ -97,16 +95,67 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 24),
 
-                // ... rest of the form fields remain the same ...
+                // Risk Factors
+                _buildSectionHeader('Risk Factors'),
+                const SizedBox(height: 16),
+                ..._riskFactors.keys.map((factor) {
+                  return CheckboxListTile(
+                    title: Text(factor, style: const TextStyle(color: Colors.white)),
+                    value: _riskFactors[factor],
+                    onChanged: (value) {
+                      setState(() {
+                        _riskFactors[factor] = value!;
+                      });
+                    },
+                    activeColor: Colors.blue,
+                  );
+                }).toList(),
+                const SizedBox(height: 24),
+
+                // Last Stroke Date
+                _buildSectionHeader('Last Stroke Date'),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _lastStrokeDateController,
+                  decoration: InputDecoration(
+                    labelText: 'Select Date',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: _selectDate,
+                    ),
+                  ),
+                  readOnly: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a date';
+                    }
+                    return null;
+                  },
+                ),
               ],
             ),
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _saveProfile,
+          child: const Icon(Icons.save),
+          backgroundColor: Colors.blue,
         ),
       ),
     );
   }
 
-  // Updated slider field with state management
+  Widget _buildSectionHeader(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    );
+  }
+
   Widget _buildSliderField({
     required String label,
     required double min,
@@ -120,10 +169,10 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: Colors.grey[800],
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 6),
@@ -134,11 +183,13 @@ class _ProfilePageState extends State<ProfilePage> {
           divisions: divisions,
           label: currentValue.toStringAsFixed(0),
           onChanged: onChanged,
+          activeColor: Colors.blue,
+          inactiveColor: Colors.grey[600],
         ),
         Text(
           'Current Level: ${currentValue.toStringAsFixed(0)}',
-          style: TextStyle(
-            color: Colors.indigo[900],
+          style: const TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -146,34 +197,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Updated checkbox field with state management
-  // ignore: unused_element
-  Widget _buildCheckboxField({
-    required String label,
-    required bool value,
-    required ValueChanged<bool?> onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Checkbox(
-            value: value,
-            onChanged: onChanged,
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[800],
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Updated dropdown field with callback
   Widget _buildDropdownField({
     required String label,
     required List<String> items,
@@ -185,10 +208,10 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: Colors.grey[800],
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 6),
@@ -196,25 +219,56 @@ class _ProfilePageState extends State<ProfilePage> {
           items: items.map((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value),
+              child: Text(value, style: const TextStyle(color: Colors.white)),
             );
           }).toList(),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Colors.grey[800],
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide.none,
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
           validator: validator,
           onChanged: onChanged,
+          dropdownColor: Colors.grey[800],
         ),
       ],
     );
   }
 
-// ... rest of the helper methods remain similar ...
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _lastStrokeDateController.text = "${picked.toLocal()}".split(' ')[0];
+      });
+    }
+  }
+
+  void _saveProfile() {
+    if (_formKey.currentState!.validate()) {
+      // Save logic here
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile saved successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all required fields.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 }
