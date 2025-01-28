@@ -75,6 +75,7 @@ Feel free to modify the existing widgets, data models, or screens to fit your re
 ## Contribution
 
 If you’d like to contribute to the project, feel free to fork the repository, create a new branch, and submit a pull request. Contributions are always welcome!
+Thank you HeyFlutter.com
 
 ### How to contribute:
 
